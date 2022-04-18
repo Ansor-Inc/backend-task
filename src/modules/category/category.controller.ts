@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
 } from '@nestjs/common';
@@ -27,10 +27,10 @@ export class CategoryController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id, true);
+    return this.categoryService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,

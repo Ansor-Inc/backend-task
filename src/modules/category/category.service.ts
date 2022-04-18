@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TreeRepository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -33,10 +33,19 @@ export class CategoryService {
     return trees;
   }
 
-  async findOne(id: number, withRelations: boolean) {
-    return withRelations
-      ? await this.categoryRepository.findOne(id, { relations: ['products'] })
-      : await this.categoryRepository.findOne(id);
+  async findOne(id: number) {
+    const category = await this.categoryRepository.findOne(id, {
+      relations: ['products'],
+    });
+    if (!category) throw new NotFoundException('Category not found');
+    return category;
+  }
+
+  async findOneAnces(id: number) {
+    let category: any = await this.categoryRepository.findOne(id);
+    if (!category) throw new NotFoundException('Category not found');
+    category = await this.categoryRepository.findAncestorsTree(category);
+    return category;
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {

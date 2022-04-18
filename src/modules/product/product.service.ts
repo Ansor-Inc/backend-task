@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoryService } from '../category/category.service';
@@ -18,7 +18,6 @@ export class ProductService {
     const prod = this.productRepository.create(createProductDto);
     const category = await this.categoryService.findOne(
       createProductDto.categoryId,
-      false,
     );
     prod.category = category;
     return await this.productRepository.save(prod);
@@ -29,9 +28,16 @@ export class ProductService {
   }
 
   async findOne(id: number) {
-    return await this.productRepository.findOne(id, {
+    const product = await this.productRepository.findOne(id, {
       relations: ['category'],
     });
+
+    if (!product) throw new NotFoundException('Product not found');
+    const category = await this.categoryService.findOneAnces(
+      product.category.id,
+    );
+    product.category = category;
+    return product;
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
