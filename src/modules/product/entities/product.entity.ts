@@ -28,7 +28,7 @@ export class Product {
     type: 'varchar',
     nullable: false,
   })
-  price: string;
+  price: number;
 
   @Column({
     type: 'varchar',
