@@ -2,7 +2,6 @@ import { Product } from 'src/modules/product/entities/product.entity';
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   Tree,
